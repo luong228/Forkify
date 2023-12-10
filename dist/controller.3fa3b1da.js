@@ -479,6 +479,8 @@ var _searchView = _interopRequireDefault(require("./views/searchView.js"));
 
 var _paginationView = _interopRequireDefault(require("./views/paginationView.js"));
 
+var _bookmarksView = _interopRequireDefault(require("./views/bookmarksView.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
@@ -495,7 +497,9 @@ const controlRecipe = async () => {
     _recipeView.default.renderSpinner(); // Update results view to mark selected search result
 
 
-    _resultsView.default.update(model.getSearchResultsPage()); // Loading recipe
+    _resultsView.default.update(model.getSearchResultsPage());
+
+    _bookmarksView.default.update(model.state.bookmarks); // Loading recipe
 
 
     await model.loadRecipe(id); // Rendering recipe
@@ -552,11 +556,15 @@ const controlServings = newServings => {
 };
 
 const controlAddBookmark = () => {
+  // Add/Remove bookmark
   if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);else {
     model.removeBookmark(model.state.recipe.id);
-  }
+  } // Update recipe view
 
-  _recipeView.default.update(model.state.recipe);
+  _recipeView.default.update(model.state.recipe); // Render bookmarks
+
+
+  _bookmarksView.default.render(model.state.bookmarks);
 };
 
 const init = () => {
@@ -572,7 +580,7 @@ const init = () => {
 };
 
 init();
-},{"core-js/modules/es.string.replace":"a41434a38db9af6d2ad868f7a439ab89","core-js/modules/es.typed-array.float32-array":"d5ed5e3a2e200dcf66c948e6350ae29c","core-js/modules/es.typed-array.float64-array":"49914eeba57759547672886c5961b9e4","core-js/modules/es.typed-array.int8-array":"1fc9d0d9e9c4ca72873ee75cc9532911","core-js/modules/es.typed-array.int16-array":"6ba53210946e69387b5af65ca70f5602","core-js/modules/es.typed-array.int32-array":"52f07ad61480c3da8b1b371346f2b755","core-js/modules/es.typed-array.uint8-array":"6042ea91f038c74624be740ff17090b9","core-js/modules/es.typed-array.uint8-clamped-array":"47e53ff27a819e98075783d2516842bf","core-js/modules/es.typed-array.uint16-array":"20f511ab1a5fbdd3a99ff1f471adbc30","core-js/modules/es.typed-array.uint32-array":"8212db3659c5fe8bebc2163b12c9f547","core-js/modules/es.typed-array.from":"183d72778e0f99cedb12a04e35ea2d50","core-js/modules/es.typed-array.of":"2ee3ec99d0b3dea4fec9002159200789","core-js/modules/web.immediate":"140df4f8e97a45c53c66fead1f5a9e92","core-js/modules/web.url":"a66c25e402880ea6b966ee8ece30b6df","core-js/modules/web.url.to-json":"6357c5a053a36e38c0e24243e550dd86","core-js/modules/web.url-search-params":"2494aebefd4ca447de0ef4cfdd47509e","./model.js":"aabf248f40f7693ef84a0cb99f385d1f","./views/recipeView.js":"bcae1aced0301b01ccacb3e6f7dfede8","./views/searchView.js":"c5d792f7cac03ef65de30cc0fbb2cae7","./views/resultsView.js":"eacdbc0d50ee3d2819f3ee59366c2773","./views/paginationView.js":"d2063f3e7de2e4cdacfcb5eb6479db05"}],"a41434a38db9af6d2ad868f7a439ab89":[function(require,module,exports) {
+},{"core-js/modules/es.string.replace":"a41434a38db9af6d2ad868f7a439ab89","core-js/modules/es.typed-array.float32-array":"d5ed5e3a2e200dcf66c948e6350ae29c","core-js/modules/es.typed-array.float64-array":"49914eeba57759547672886c5961b9e4","core-js/modules/es.typed-array.int8-array":"1fc9d0d9e9c4ca72873ee75cc9532911","core-js/modules/es.typed-array.int16-array":"6ba53210946e69387b5af65ca70f5602","core-js/modules/es.typed-array.int32-array":"52f07ad61480c3da8b1b371346f2b755","core-js/modules/es.typed-array.uint8-array":"6042ea91f038c74624be740ff17090b9","core-js/modules/es.typed-array.uint8-clamped-array":"47e53ff27a819e98075783d2516842bf","core-js/modules/es.typed-array.uint16-array":"20f511ab1a5fbdd3a99ff1f471adbc30","core-js/modules/es.typed-array.uint32-array":"8212db3659c5fe8bebc2163b12c9f547","core-js/modules/es.typed-array.from":"183d72778e0f99cedb12a04e35ea2d50","core-js/modules/es.typed-array.of":"2ee3ec99d0b3dea4fec9002159200789","core-js/modules/web.immediate":"140df4f8e97a45c53c66fead1f5a9e92","core-js/modules/web.url":"a66c25e402880ea6b966ee8ece30b6df","core-js/modules/web.url.to-json":"6357c5a053a36e38c0e24243e550dd86","core-js/modules/web.url-search-params":"2494aebefd4ca447de0ef4cfdd47509e","./model.js":"aabf248f40f7693ef84a0cb99f385d1f","./views/recipeView.js":"bcae1aced0301b01ccacb3e6f7dfede8","./views/searchView.js":"c5d792f7cac03ef65de30cc0fbb2cae7","./views/resultsView.js":"eacdbc0d50ee3d2819f3ee59366c2773","./views/paginationView.js":"d2063f3e7de2e4cdacfcb5eb6479db05","./views/bookmarksView.js":"7ed9311e216aa789713f70ebeec3ed40"}],"a41434a38db9af6d2ad868f7a439ab89":[function(require,module,exports) {
 'use strict';
 var fixRegExpWellKnownSymbolLogic = require('../internals/fix-regexp-well-known-symbol-logic');
 var anObject = require('../internals/an-object');
@@ -7044,11 +7052,13 @@ class View {
     _defineProperty(this, "_parentElement", void 0);
   }
 
-  render(data) {
+  render(data, render = true) {
     if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
     this._data = data;
 
     const markup = this._generateMarkup();
+
+    if (!render) return markup;
 
     this._clear();
 
@@ -7180,6 +7190,8 @@ var _view = _interopRequireDefault(require("./view"));
 
 var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
 
+var _previewView = _interopRequireDefault(require("./previewView"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -7196,20 +7208,48 @@ class ResultsView extends _view.default {
   }
 
   _generateMarkup() {
-    return this._data.map(this._generateMarkupPreview).join('');
+    return this._data.map(b => _previewView.default.render(b, false)).join('');
   }
 
-  _generateMarkupPreview(item) {
+}
+
+var _default = new ResultsView();
+
+exports.default = _default;
+},{"./view":"6a3957d8744bf1d70b2b44f3726dda59","url:../../img/icons.svg":"09e8c7d15bdeb0fd801ee1cdd0cba114","./previewView":"e4d6583325a8b6c9380670c4f233bf07"}],"e4d6583325a8b6c9380670c4f233bf07":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _view = _interopRequireDefault(require("./view"));
+
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+class PreviewView extends _view.default {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "_parentElement", '');
+  }
+
+  _generateMarkup() {
     const id = window.location.hash.slice(1);
     return `
             <li class="preview">
-            <a class="preview__link ${item.id === id ? 'preview__link--active' : ''}" href="#${item.id}">
+            <a class="preview__link ${this._data.id === id ? 'preview__link--active' : ''}" href="#${this._data.id}">
             <figure class="preview__fig">
-                <img src="${item.image}" alt="${item.title}" />
+                <img src="${this._data.image}" alt="${this._data.title}" />
             </figure>
             <div class="preview__data">
-                <h4 class="preview__title">${item.title}</h4>
-                <p class="preview__publisher">${item.publisher}</p>
+                <h4 class="preview__title">${this._data.title}</h4>
+                <p class="preview__publisher">${this._data.publisher}</p>
             </div>
             </a>
         </li>`;
@@ -7217,7 +7257,7 @@ class ResultsView extends _view.default {
 
 }
 
-var _default = new ResultsView();
+var _default = new PreviewView();
 
 exports.default = _default;
 },{"./view":"6a3957d8744bf1d70b2b44f3726dda59","url:../../img/icons.svg":"09e8c7d15bdeb0fd801ee1cdd0cba114"}],"d2063f3e7de2e4cdacfcb5eb6479db05":[function(require,module,exports) {
@@ -7305,6 +7345,44 @@ class PaginationView extends _view.default {
 var _default = new PaginationView();
 
 exports.default = _default;
-},{"./view":"6a3957d8744bf1d70b2b44f3726dda59","url:../../img/icons.svg":"09e8c7d15bdeb0fd801ee1cdd0cba114"}]},{},["3a2f0691e680181a28396f979b93fa7b","464b84f28b26aaa6ba65fe9e59bba1c8","175e469a7ea7db1c8c0744d04372621f"], null)
+},{"./view":"6a3957d8744bf1d70b2b44f3726dda59","url:../../img/icons.svg":"09e8c7d15bdeb0fd801ee1cdd0cba114"}],"7ed9311e216aa789713f70ebeec3ed40":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _view = _interopRequireDefault(require("./view"));
+
+var _previewView = _interopRequireDefault(require("./previewView"));
+
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+class BookmarksView extends _view.default {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "_parentElement", document.querySelector('.bookmarks__list'));
+
+    _defineProperty(this, "_errorMessage", 'No bookmarks yet. Find a nice recipe and bookmark it :)');
+
+    _defineProperty(this, "_message", '');
+  }
+
+  _generateMarkup() {
+    return this._data.map(b => _previewView.default.render(b, false)).join('');
+  }
+
+}
+
+var _default = new BookmarksView();
+
+exports.default = _default;
+},{"./view":"6a3957d8744bf1d70b2b44f3726dda59","url:../../img/icons.svg":"09e8c7d15bdeb0fd801ee1cdd0cba114","./previewView":"e4d6583325a8b6c9380670c4f233bf07"}]},{},["3a2f0691e680181a28396f979b93fa7b","464b84f28b26aaa6ba65fe9e59bba1c8","175e469a7ea7db1c8c0744d04372621f"], null)
 
 //# sourceMappingURL=controller.3fa3b1da.js.map
