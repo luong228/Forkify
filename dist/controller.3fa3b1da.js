@@ -477,15 +477,16 @@ var _resultsView = _interopRequireDefault(require("./views/resultsView.js"));
 
 var _searchView = _interopRequireDefault(require("./views/searchView.js"));
 
+var _paginationView = _interopRequireDefault(require("./views/paginationView.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-if (module.hot) module.hot.accept(); // https://forkify-api.herokuapp.com/v2
+// if (module.hot) module.hot.accept();
 ///////////////////////////////////////
-
 const controlRecipe = async () => {
   try {
     const id = window.location.hash.slice(1);
@@ -512,11 +513,26 @@ const controlSearchResults = async () => {
 
     if (!query) return; // Load search results
 
-    await model.loadSearchResults(query); // Render
+    await model.loadSearchResults(query); // Render results
 
-    _resultsView.default.render(model.state.search.results);
+    _resultsView.default.render(model.getSearchResultsPage()); // Render pagination
+
+
+    _paginationView.default.render(model.state.search);
   } catch (err) {
     console.error(err);
+  }
+};
+
+const controlPagination = goToPage => {
+  try {
+    // Render NEW results
+    _resultsView.default.render(model.getSearchResultsPage(goToPage)); // Render NEW pagination btns
+
+
+    _paginationView.default.render(model.state.search);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -524,10 +540,12 @@ const init = () => {
   _recipeView.default.addHandlerRender(controlRecipe);
 
   _searchView.default.addHandlerSearch(controlSearchResults);
+
+  _paginationView.default.addHandlerClick(controlPagination);
 };
 
 init();
-},{"core-js/modules/es.string.replace":"a41434a38db9af6d2ad868f7a439ab89","core-js/modules/es.typed-array.float32-array":"d5ed5e3a2e200dcf66c948e6350ae29c","core-js/modules/es.typed-array.float64-array":"49914eeba57759547672886c5961b9e4","core-js/modules/es.typed-array.int8-array":"1fc9d0d9e9c4ca72873ee75cc9532911","core-js/modules/es.typed-array.int16-array":"6ba53210946e69387b5af65ca70f5602","core-js/modules/es.typed-array.int32-array":"52f07ad61480c3da8b1b371346f2b755","core-js/modules/es.typed-array.uint8-array":"6042ea91f038c74624be740ff17090b9","core-js/modules/es.typed-array.uint8-clamped-array":"47e53ff27a819e98075783d2516842bf","core-js/modules/es.typed-array.uint16-array":"20f511ab1a5fbdd3a99ff1f471adbc30","core-js/modules/es.typed-array.uint32-array":"8212db3659c5fe8bebc2163b12c9f547","core-js/modules/es.typed-array.from":"183d72778e0f99cedb12a04e35ea2d50","core-js/modules/es.typed-array.of":"2ee3ec99d0b3dea4fec9002159200789","core-js/modules/web.immediate":"140df4f8e97a45c53c66fead1f5a9e92","core-js/modules/web.url":"a66c25e402880ea6b966ee8ece30b6df","core-js/modules/web.url.to-json":"6357c5a053a36e38c0e24243e550dd86","core-js/modules/web.url-search-params":"2494aebefd4ca447de0ef4cfdd47509e","./model.js":"aabf248f40f7693ef84a0cb99f385d1f","./views/recipeView.js":"bcae1aced0301b01ccacb3e6f7dfede8","./views/searchView.js":"c5d792f7cac03ef65de30cc0fbb2cae7","./views/resultsView.js":"eacdbc0d50ee3d2819f3ee59366c2773"}],"a41434a38db9af6d2ad868f7a439ab89":[function(require,module,exports) {
+},{"core-js/modules/es.string.replace":"a41434a38db9af6d2ad868f7a439ab89","core-js/modules/es.typed-array.float32-array":"d5ed5e3a2e200dcf66c948e6350ae29c","core-js/modules/es.typed-array.float64-array":"49914eeba57759547672886c5961b9e4","core-js/modules/es.typed-array.int8-array":"1fc9d0d9e9c4ca72873ee75cc9532911","core-js/modules/es.typed-array.int16-array":"6ba53210946e69387b5af65ca70f5602","core-js/modules/es.typed-array.int32-array":"52f07ad61480c3da8b1b371346f2b755","core-js/modules/es.typed-array.uint8-array":"6042ea91f038c74624be740ff17090b9","core-js/modules/es.typed-array.uint8-clamped-array":"47e53ff27a819e98075783d2516842bf","core-js/modules/es.typed-array.uint16-array":"20f511ab1a5fbdd3a99ff1f471adbc30","core-js/modules/es.typed-array.uint32-array":"8212db3659c5fe8bebc2163b12c9f547","core-js/modules/es.typed-array.from":"183d72778e0f99cedb12a04e35ea2d50","core-js/modules/es.typed-array.of":"2ee3ec99d0b3dea4fec9002159200789","core-js/modules/web.immediate":"140df4f8e97a45c53c66fead1f5a9e92","core-js/modules/web.url":"a66c25e402880ea6b966ee8ece30b6df","core-js/modules/web.url.to-json":"6357c5a053a36e38c0e24243e550dd86","core-js/modules/web.url-search-params":"2494aebefd4ca447de0ef4cfdd47509e","./model.js":"aabf248f40f7693ef84a0cb99f385d1f","./views/recipeView.js":"bcae1aced0301b01ccacb3e6f7dfede8","./views/searchView.js":"c5d792f7cac03ef65de30cc0fbb2cae7","./views/resultsView.js":"eacdbc0d50ee3d2819f3ee59366c2773","./views/paginationView.js":"d2063f3e7de2e4cdacfcb5eb6479db05"}],"a41434a38db9af6d2ad868f7a439ab89":[function(require,module,exports) {
 'use strict';
 var fixRegExpWellKnownSymbolLogic = require('../internals/fix-regexp-well-known-symbol-logic');
 var anObject = require('../internals/an-object');
@@ -5454,7 +5472,7 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
+exports.getSearchResultsPage = exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
 
 var _regeneratorRuntime = require("regenerator-runtime");
 
@@ -5466,7 +5484,9 @@ const state = {
   recipe: {},
   search: {
     query: '',
-    results: []
+    results: [],
+    resultsPerPage: _config.RES_PER_PAGE,
+    currentPage: 1
   }
 };
 exports.state = state;
@@ -5513,6 +5533,15 @@ const loadSearchResults = async query => {
 };
 
 exports.loadSearchResults = loadSearchResults;
+
+const getSearchResultsPage = (page = state.search.currentPage) => {
+  state.search.currentPage = page;
+  const start = (page - 1) * state.search.resultsPerPage;
+  const end = page * state.search.resultsPerPage;
+  return state.search.results.slice(start, end);
+};
+
+exports.getSearchResultsPage = getSearchResultsPage;
 },{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config":"09212d541c5c40ff2bd93475a904f8de","./views/helpers":"30384df8db9b2dfff2d7e59daa9a7190"}],"e155e0d3930b156f86c48e8d05522b16":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -6269,11 +6298,13 @@ try {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TIMEOUT_SEC = exports.API_URL = void 0;
+exports.RES_PER_PAGE = exports.TIMEOUT_SEC = exports.API_URL = void 0;
 const API_URL = "https://forkify-api.herokuapp.com/api/v2/recipes/";
 exports.API_URL = API_URL;
 const TIMEOUT_SEC = 10;
 exports.TIMEOUT_SEC = TIMEOUT_SEC;
+const RES_PER_PAGE = 10;
+exports.RES_PER_PAGE = RES_PER_PAGE;
 },{}],"30384df8db9b2dfff2d7e59daa9a7190":[function(require,module,exports) {
 "use strict";
 
@@ -7085,6 +7116,91 @@ class ResultsView extends _view.default {
 }
 
 var _default = new ResultsView();
+
+exports.default = _default;
+},{"./view":"6a3957d8744bf1d70b2b44f3726dda59","url:../../img/icons.svg":"09e8c7d15bdeb0fd801ee1cdd0cba114"}],"d2063f3e7de2e4cdacfcb5eb6479db05":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _view = _interopRequireDefault(require("./view"));
+
+var _icons = _interopRequireDefault(require("url:../../img/icons.svg"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+class PaginationView extends _view.default {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "_parentElement", document.querySelector('.pagination'));
+
+    _defineProperty(this, "_errorMessage", 'No recipes found for your query. Please try again!');
+
+    _defineProperty(this, "_message", '');
+  }
+
+  addHandlerClick(handler) {
+    this._parentElement.addEventListener('click', e => {
+      const btn = e.target.closest('.btn--inline');
+      if (!btn) return;
+      const goToPage = +btn.dataset.goto;
+      handler(goToPage);
+    });
+  }
+
+  _generateMarkup() {
+    const curPage = +this._data.currentPage;
+    const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage); // Page 1, and there are other pages
+
+    if (curPage === 1 && numPages > 1) {
+      return this._generateMarkupButton(curPage, false, true);
+    } // Page 1, and there are NO other pages
+
+
+    if (curPage === 1 === numPages) {
+      return '';
+    } // Last page
+
+
+    if (curPage === numPages && numPages > 1) {
+      return this._generateMarkupButton(curPage, true, false);
+    } // Other pages
+
+
+    if (curPage < numPages && curPage !== 1) {
+      return this._generateMarkupButton(curPage, true, true);
+    }
+  }
+
+  _generateMarkupButton(curPage, prev = false, next = false) {
+    const prevBtn = `
+            <button data-goto="${curPage - 1}" class="btn--inline pagination__btn--prev">
+                <svg class="search__icon">
+                <use href="${_icons.default}#icon-arrow-left"></use>
+                </svg>
+                <span>Page ${curPage - 1}</span>
+            </button>`;
+    const nextBtn = `
+                <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
+                <span>Page ${curPage + 1}</span>
+                <svg class="search__icon">
+                    <use href="${_icons.default}#icon-arrow-right"></use>
+                </svg>
+                </button>`;
+    if (prev && next) return prevBtn.concat(nextBtn);
+    if (prev) return prevBtn;
+    return nextBtn;
+  }
+
+}
+
+var _default = new PaginationView();
 
 exports.default = _default;
 },{"./view":"6a3957d8744bf1d70b2b44f3726dda59","url:../../img/icons.svg":"09e8c7d15bdeb0fd801ee1cdd0cba114"}]},{},["3a2f0691e680181a28396f979b93fa7b","464b84f28b26aaa6ba65fe9e59bba1c8","175e469a7ea7db1c8c0744d04372621f"], null)
