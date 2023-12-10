@@ -24,6 +24,7 @@ const controlRecipe = async () => {
 
     // Rendering recipe
     recipeView.render(model.state.recipe);
+    controlServings(5);
 
     // recipeContainer.insertAdjacentHTML('afterbegin', markup)
   } catch (err) {
@@ -63,8 +64,22 @@ const controlPagination = goToPage => {
   }
 };
 
+const controlServings = (newServings) => {
+  try {
+      // Update the recipe servings (in state)
+  model.updateServings(newServings);
+
+  // Update the recipe view 
+  recipeView.render(model.state.recipe);
+  } catch (error) {
+    console.error(error);
+  }
+
+}
+
 const init = () => {
   recipeView.addHandlerRender(controlRecipe);
+  recipeView.addHandlerUpdateServings(controlServings);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
 };

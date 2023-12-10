@@ -497,8 +497,9 @@ const controlRecipe = async () => {
 
     await model.loadRecipe(id); // Rendering recipe
 
-    _recipeView.default.render(model.state.recipe); // recipeContainer.insertAdjacentHTML('afterbegin', markup)
+    _recipeView.default.render(model.state.recipe);
 
+    controlServings(5); // recipeContainer.insertAdjacentHTML('afterbegin', markup)
   } catch (err) {
     _recipeView.default.renderError(err);
   }
@@ -536,8 +537,21 @@ const controlPagination = goToPage => {
   }
 };
 
+const controlServings = newServings => {
+  try {
+    // Update the recipe servings (in state)
+    model.updateServings(newServings); // Update the recipe view 
+
+    _recipeView.default.render(model.state.recipe);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const init = () => {
   _recipeView.default.addHandlerRender(controlRecipe);
+
+  _recipeView.default.addHandlerUpdateServings(controlServings);
 
   _searchView.default.addHandlerSearch(controlSearchResults);
 
@@ -5472,7 +5486,7 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getSearchResultsPage = exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
+exports.updateServings = exports.getSearchResultsPage = exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
 
 var _regeneratorRuntime = require("regenerator-runtime");
 
@@ -5542,6 +5556,15 @@ const getSearchResultsPage = (page = state.search.currentPage) => {
 };
 
 exports.getSearchResultsPage = getSearchResultsPage;
+
+const updateServings = newServings => {
+  state.recipe.ingredients.forEach(ing => {
+    ing.quantity = ing.quantity * newServings / state.recipe.servings;
+  });
+  state.recipe.servings = newServings;
+};
+
+exports.updateServings = updateServings;
 },{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config":"09212d541c5c40ff2bd93475a904f8de","./views/helpers":"30384df8db9b2dfff2d7e59daa9a7190"}],"e155e0d3930b156f86c48e8d05522b16":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -6368,6 +6391,17 @@ class RecipeView extends _view.default {
     ['hashchange', 'load'].forEach(e => window.addEventListener(e, handler));
   }
 
+  addHandlerUpdateServings(handler) {
+    this._parentElement.addEventListener('click', e => {
+      const btn = e.target.closest('.btn--update-servings');
+      if (!btn) return;
+      const {
+        updateTo
+      } = btn.dataset;
+      if (+updateTo > 0) handler(+updateTo);
+    });
+  }
+
   _generateMarkup() {
     return `
         <figure class="recipe__fig">
@@ -6393,12 +6427,12 @@ class RecipeView extends _view.default {
           <span class="recipe__info-text">servings</span>
 
           <div class="recipe__info-buttons">
-            <button class="btn--tiny btn--increase-servings">
+            <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings - 1}">
               <svg>
                 <use href="${_icons.default}#icon-minus-circle"></use>
               </svg>
             </button>
-            <button class="btn--tiny btn--increase-servings">
+            <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings + 1}">
               <svg>
                 <use href="${_icons.default}#icon-plus-circle"></use>
               </svg>
