@@ -36,7 +36,7 @@ const controlRecipe = async () => {
 
       // recipeContainer.insertAdjacentHTML('afterbegin', markup)
   } catch (err) {
-    alert(err);
+    recipeView.renderError(err)
   }
 };
 

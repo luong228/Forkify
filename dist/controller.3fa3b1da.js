@@ -504,7 +504,7 @@ const controlRecipe = async () => {
     _recipeView.default.render(model.state.recipe); // recipeContainer.insertAdjacentHTML('afterbegin', markup)
 
   } catch (err) {
-    alert(err);
+    _recipeView.default.renderError(err);
   }
 };
 
@@ -5470,7 +5470,7 @@ const loadRecipe = async function (id) {
       ingredients: recipe.ingredients
     };
   } catch (err) {
-    console.error(err);
+    throw err;
   }
 };
 
@@ -6290,6 +6290,8 @@ var _parentElement = new WeakMap();
 
 var _data = new WeakMap();
 
+var _errorMessage = new WeakMap();
+
 var _clear = new WeakSet();
 
 var _generateMarkup = new WeakSet();
@@ -6313,6 +6315,11 @@ class RecipeView {
       writable: true,
       value: void 0
     });
+
+    _errorMessage.set(this, {
+      writable: true,
+      value: 'No recipes found for your query. Please try again!'
+    });
   }
 
   render(data) {
@@ -6332,6 +6339,38 @@ class RecipeView {
     </svg>
   </div>`;
     _classPrivateFieldGet(this, _parentElement).innerHTML = markup;
+  }
+
+  renderError(message = _classPrivateFieldGet(this, _errorMessage)) {
+    const markup = `
+    <div class="error">
+            <div>
+              <svg>
+                <use href="${_icons.default}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div> `;
+
+    _classPrivateMethodGet(this, _clear, _clear2).call(this);
+
+    _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markup);
+  }
+
+  renderMessage(message = _classPrivateFieldGet(this, _errorMessage)) {
+    const markup = `
+    <div class="error">
+            <div>
+              <svg>
+                <use href="${_icons.default}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div> `;
+
+    _classPrivateMethodGet(this, _clear, _clear2).call(this);
+
+    _classPrivateFieldGet(this, _parentElement).insertAdjacentHTML('afterbegin', markup);
   }
 
   addHandlerRender(handler) {
