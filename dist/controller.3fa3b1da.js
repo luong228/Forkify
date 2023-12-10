@@ -497,7 +497,8 @@ const controlRecipe = async () => {
     _recipeView.default.renderSpinner(); // Update results view to mark selected search result
 
 
-    _resultsView.default.update(model.getSearchResultsPage());
+    _resultsView.default.update(model.getSearchResultsPage()); // Updating bookmarks view
+
 
     _bookmarksView.default.update(model.state.bookmarks); // Loading recipe
 
@@ -509,6 +510,8 @@ const controlRecipe = async () => {
     controlServings(5); // recipeContainer.insertAdjacentHTML('afterbegin', markup)
   } catch (err) {
     _recipeView.default.renderError(err);
+
+    console.error(err);
   }
 };
 
@@ -567,7 +570,19 @@ const controlAddBookmark = () => {
   _bookmarksView.default.render(model.state.bookmarks);
 };
 
+const controlBookmark = () => {
+  _bookmarksView.default.render(model.state.bookmarks);
+};
+
+const clearBookmarks = () => {
+  localStorage.clear('bookmarks');
+}; // clearBookmarks();
+
+
 const init = () => {
+  // Bookmark must render before recipe
+  _bookmarksView.default.addHandlerRender(controlBookmark);
+
   _recipeView.default.addHandlerRender(controlRecipe);
 
   _recipeView.default.addHandlerUpdateServings(controlServings);
@@ -5592,11 +5607,16 @@ const updateServings = newServings => {
 
 exports.updateServings = updateServings;
 
+const persistBookmarks = () => {
+  localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
+};
+
 const addBookmark = recipe => {
   // Add Bookmark
   state.bookmarks.push(recipe); // Mark current recipe as bookmark
 
   if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+  persistBookmarks();
 };
 
 exports.addBookmark = addBookmark;
@@ -5607,9 +5627,18 @@ const removeBookmark = id => {
   state.bookmarks.splice(index, 1); // Mark current recipe as NOT bookmark
 
   if (state.recipe.id === id) state.recipe.bookmarked = false;
+  persistBookmarks();
 };
 
 exports.removeBookmark = removeBookmark;
+
+const init = () => {
+  const storage = localStorage.getItem('bookmarks');
+  if (storage) state.bookmarks = JSON.parse(storage);
+};
+
+init();
+console.log(state.bookmarks);
 },{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config":"09212d541c5c40ff2bd93475a904f8de","./views/helpers":"30384df8db9b2dfff2d7e59daa9a7190"}],"e155e0d3930b156f86c48e8d05522b16":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -7372,6 +7401,10 @@ class BookmarksView extends _view.default {
     _defineProperty(this, "_errorMessage", 'No bookmarks yet. Find a nice recipe and bookmark it :)');
 
     _defineProperty(this, "_message", '');
+  }
+
+  addHandlerRender(handler) {
+    window.addEventListener('load', handler);
   }
 
   _generateMarkup() {
