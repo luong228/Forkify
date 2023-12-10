@@ -492,7 +492,10 @@ const controlRecipe = async () => {
     const id = window.location.hash.slice(1);
     if (!id) return;
 
-    _recipeView.default.renderSpinner(); // Loading recipe
+    _recipeView.default.renderSpinner(); // Update results view to mark selected search result
+
+
+    _resultsView.default.update(model.getSearchResultsPage()); // Loading recipe
 
 
     await model.loadRecipe(id); // Rendering recipe
@@ -542,7 +545,7 @@ const controlServings = newServings => {
     // Update the recipe servings (in state)
     model.updateServings(newServings); // Update the recipe view 
 
-    _recipeView.default.render(model.state.recipe);
+    _recipeView.default.update(model.state.recipe);
   } catch (error) {
     console.error(error);
   }
@@ -7010,6 +7013,28 @@ class View {
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
+  update(data) {
+    this._data = data;
+
+    const newMarkup = this._generateMarkup();
+
+    const newDOM = document.createRange().createContextualFragment(newMarkup);
+    const newElements = Array.from(newDOM.querySelectorAll('*'));
+    const curElements = Array.from(this._parentElement.querySelectorAll('*'));
+    newElements.forEach((newEl, i) => {
+      const curEl = curElements[i]; // Update changed text
+
+      if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() !== '') {
+        curEl.textContent = newEl.textContent;
+      } // Update change attributes
+
+
+      if (!newEl.isEqualNode(curEl)) {
+        Array.from(newEl.attributes).forEach(attr => curEl.setAttribute(attr.name, attr.value));
+      }
+    });
+  }
+
   _clear() {
     this._parentElement.innerHTML = '';
   }
@@ -7133,9 +7158,10 @@ class ResultsView extends _view.default {
   }
 
   _generateMarkupPreview(item) {
+    const id = window.location.hash.slice(1);
     return `
             <li class="preview">
-            <a class="preview__link" href="#${item.id}">
+            <a class="preview__link ${item.id === id ? 'preview__link--active' : ''}" href="#${item.id}">
             <figure class="preview__fig">
                 <img src="${item.image}" alt="${item.title}" />
             </figure>
